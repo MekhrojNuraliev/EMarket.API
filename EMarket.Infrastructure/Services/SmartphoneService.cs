@@ -18,37 +18,37 @@ namespace EMarket.Infrastructure.Services
         }
         public async Task<Smartphone> CreateAsync(Smartphone entity)
         {
-            _context.Smartphones.Add(entity);
+          await  _context.Smartphones.AddAsync(entity);
             await _context.SaveChangesAsync();
             return entity;
         }
-        public bool Update(Smartphone entity)
+        public async Task<bool> UpdateAsync(Smartphone entity)
         {
             _context.Smartphones.Update(entity);
-            var executedRows = _context.SaveChanges();
+            var executedRows = await _context.SaveChangesAsync();
             return executedRows > 0;
         }
 
-        public bool Delete(int Id)
+        public async Task<bool> DeleteAsync(int Id)
         {
-            var item = GetAll().FirstOrDefault(x => x.Id == Id);
+            var item = GetAllAsync().Result.FirstOrDefault(x => x.Id == Id);
             if (item != null)
             {
                 _context.Smartphones.Remove(item);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return true;
             }
             return false;
         }
 
-        public IEnumerable<Smartphone> GetAll()
+        public async Task<IEnumerable<Smartphone>> GetAllAsync()
         {
-            return _context.Smartphones.ToList();
+            return _context.Smartphones.OrderBy(x => x.Id).ToList();
         }
 
-        public Smartphone GetById(int id)
+        public async Task<Smartphone> GetByIdAsync(int id)
         {
-            var item = GetAll().FirstOrDefault(x => x.Id == id);
+            var item = GetAllAsync().Result.FirstOrDefault(x => x.Id == id);
             return item;
         }
     }

@@ -1,7 +1,8 @@
-﻿using Emarket.Domain.Models;
+﻿using Emarket.Domain.Entities;
+using Emarket.Domain.Models;
 using EMarket.Application.HttpClientBase;
-using EMarket.Application.MediatR;
 using EMarket.Application.Services;
+using EMarket.Infrastructure.MediatR.MediatrForSmartphone;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,35 +21,36 @@ namespace EMarket.API.Controllers
         {
             _externalAPIs = externalAPIs;
             _smartphoneService = smartphoneService;
+            _mediator = mediator;
         }
         [HttpPost]
-        public async Task<ResponseModel<Smartphone>> Create(Smartphone _smartphone)
+        public async Task<Response<Smartphone>> Create(CreateSmartphone smartphone)
         {
-            var request = new SmartphoneCreate() { smartphone = _smartphone };
-            var result = await _mediator.Send(request);
-            return result;
+            var result = await _mediator.Send(smartphone);
+            return new(result);
         }
         [HttpPut]
-        public string Update(Smartphone pharm)
+        public async Task<ActionResult<string>> Update(UpdateSmartphone smartphone)
         {
-            _smartphoneService.Update(pharm);
-            return "Success!";
+            var res = await _mediator.Send(smartphone);
+            return Ok(res);
         }
         [HttpDelete]
-        public string Delete(int id)
+        public async Task<ActionResult<string>> Delete(DeleteSmartphone phone)
         {
-            _smartphoneService.Delete(id);
-            return "Success!";
+            var res = await _mediator.Send(phone);
+            return Ok(res);
         }
         [HttpGet]
-        public IEnumerable<Smartphone> GetAll()
+        public async Task<ActionResult<Smartphone>> GetAll(GetAllSmartphone phone)
         {
-            return _smartphoneService.GetAll();
+            var res = await _mediator.Send(phone);
+            return Ok(res);
         }
         [HttpGet]
-        public Smartphone GetById(int id)
+        public async Task<Smartphone> GetById(int id)
         {
-            return _smartphoneService.GetById(id);
+            return _smartphoneService.GetByIdAsync(id).Result;
         }
         #region HttpClient
         //[HttpDelete]

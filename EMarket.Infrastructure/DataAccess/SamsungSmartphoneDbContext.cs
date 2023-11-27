@@ -1,4 +1,5 @@
-﻿using Emarket.Domain.Models;
+﻿using Emarket.Domain.Entities;
+using Emarket.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

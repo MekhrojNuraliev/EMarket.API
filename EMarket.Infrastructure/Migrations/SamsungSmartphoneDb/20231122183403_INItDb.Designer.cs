@@ -8,11 +8,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EMarket.Infrastructure.Migrations
+namespace EMarket.Infrastructure.Migrations.SamsungSmartphoneDb
 {
     [DbContext(typeof(SamsungSmartphoneDbContext))]
-    [Migration("20231005161535_InitDB")]
-    partial class InitDB
+    [Migration("20231122183403_INItDb")]
+    partial class INItDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,7 +36,6 @@ namespace EMarket.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Model")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<double>("Price")

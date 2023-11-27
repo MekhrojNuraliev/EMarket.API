@@ -3,10 +3,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EMarket.Infrastructure.Migrations
+namespace EMarket.Infrastructure.Migrations.SamsungSmartphoneDb
 {
     /// <inheritdoc />
-    public partial class InitDB : Migration
+    public partial class INItDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,7 @@ namespace EMarket.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Model = table.Column<string>(type: "text", nullable: false),
+                    Model = table.Column<string>(type: "text", nullable: true),
                     Price = table.Column<double>(type: "double precision", nullable: false),
                     Count = table.Column<int>(type: "integer", nullable: false)
                 },

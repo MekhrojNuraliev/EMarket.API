@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EMarket.Infrastructure.Migrations
+namespace EMarket.Infrastructure.Migrations.SamsungSmartphoneDb
 {
     [DbContext(typeof(SamsungSmartphoneDbContext))]
     partial class SamsungSmartphoneDbContextModelSnapshot : ModelSnapshot
@@ -33,7 +33,6 @@ namespace EMarket.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Model")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<double>("Price")

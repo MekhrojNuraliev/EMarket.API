@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Emarket.Domain.Models;
 
-public class ResponseModel<T>
+public class Response<T>
 {
-    public ResponseModel(T result, HttpStatusCode statusCode = HttpStatusCode.OK)
+    public Response(T result, HttpStatusCode statusCode = HttpStatusCode.OK)
     {
         Result = result;
         StatusCode = statusCode;
     }
 
-    public ResponseModel(string? error, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+    public Response(string? error, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
     {
         Error = error;
         StatusCode = statusCode;
