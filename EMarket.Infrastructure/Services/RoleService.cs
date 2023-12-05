@@ -13,9 +13,9 @@ namespace EMarket.Infrastructure.Services
 {
     public class RoleService : IRoleService
     {
-        private readonly IdentityDbContext _dbContext;
+        private readonly LoginDbContext _dbContext;
 
-        public RoleService(IdentityDbContext dbContext)
+        public RoleService(LoginDbContext dbContext)
         {
             _dbContext = dbContext;
         }

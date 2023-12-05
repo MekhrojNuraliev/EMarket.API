@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -30,14 +31,19 @@ namespace EMarket.Infrastructure.Services
 
         public async Task<Token> GenerateTokenAsync(User user)
         {
+            var roles = user.Roles;
             List<Claim> claims = new()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Name),
                 new Claim("Id", user.Id.ToString())
-            };
+        };
             foreach (var role in user.Roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role.Name));
+                //foreach (var permission in role.Permissions)
+                //{
+                //    claims.Add(new Claim(ClaimTypes.Role, permission.Name));
+                //}
             }
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));

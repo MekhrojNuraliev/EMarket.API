@@ -29,9 +29,7 @@ namespace EMarket.Infrastructure.MediatR.MediatrForRole
 
             Role role = new Role()
             {
-                Name = request.Name,
-                Users = new List<User>(),
-                Permissions = new List<Permission>()
+                Name = request.Name
             };
             await _roleService.CreateAsync(role);
             return role;

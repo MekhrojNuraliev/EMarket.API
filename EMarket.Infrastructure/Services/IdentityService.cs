@@ -10,16 +10,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Role = Emarket.Domain.Entities.Role;
 
 namespace EMarket.Infrastructure.Services
 {
     public class IdentityService : IIdentityService
     {
         private readonly ITokenService _tokenService;
-        private readonly IdentityDbContext _dbContext;
+        private readonly LoginDbContext _dbContext;
         private readonly int _refreshTokenLifetime;
 
-        public IdentityService(ITokenService tokenService, IdentityDbContext dbContext, IConfiguration configuration)
+        public IdentityService(ITokenService tokenService, LoginDbContext dbContext, IConfiguration configuration)
         {
             _tokenService = tokenService;
             _dbContext = dbContext;
@@ -71,17 +72,27 @@ namespace EMarket.Infrastructure.Services
         {
             user.Password = _tokenService.ComputeSHA256Hash(user.Password);
             await _dbContext.Users.AddAsync(user);
+
             int effectedRows = await _dbContext.SaveChangesAsync();
 
+            user.Roles.Add(new Role()
+            {
+                Id = 2,
+                Name = "Member"
+            });
+            _dbContext.Users.Update(user);
+            var dto = _dbContext.Users.Where(x => x.Id == user.Id).Include(x => x.Roles)
+                                         .Select(x=>x).FirstOrDefault();
+            await _dbContext.SaveChangesAsync();
             if (effectedRows <= 0)
                 return new("Operation failed");
-
-            Token token = await _tokenService.GenerateTokenAsync(user);
+                        
+            Token token = await _tokenService.GenerateTokenAsync(dto);
             bool isSuccess =  await SaveRefreshTokenAsync(token.RefreshToken, user);
             GetUserModel getUserModel = new()
             {
                 tokens = token,
-                user = user
+                user = dto
             };
             return isSuccess? new(getUserModel) : new("Failed");
         }

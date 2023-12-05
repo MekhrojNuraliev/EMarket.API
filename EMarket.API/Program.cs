@@ -11,6 +11,7 @@ using EMarket.Infrastructure.MediatR.MediatrForSmartphone;
 using EMarket.Infrastructure.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -26,27 +27,37 @@ namespace EMarket.API
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
             // Add services to the container.
+            builder.Services.AddCors();
 
             builder.Services.AddControllers();
-            builder.Services.AddScoped<IRoleService, RoleService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
-            builder.Services.AddScoped<IIdentityService, IdentityService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
             builder.Services.AddInfrastructureSmartphoneServices(builder.Configuration);
+            builder.Services.AddInfrastructureAuthorizeService(builder.Configuration);
+            builder.Services.AddInfrastructureRoleService(builder.Configuration);
+
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IExternalAPIs,  ExternalAPIs>();
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
-            builder.Services.AddTransient<IRequestHandler<CreateRole, Role>, CreateRoleHandler>();
+            builder.Services.AddIdentity<User, IdentityRole<int>>()
+                .AddEntityFrameworkStores<UserDbContext>().AddDefaultTokenProviders();
 
-            builder.Services.AddDbContext<IdentityDbContext>(options =>
+            
+
+            builder.Services.AddDbContext<LoginDbContext>(options =>
             {
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection"));
             });
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+			builder.Services.AddDbContext<UserDbContext>(options =>
+			{
+				options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityDbConnection"));
+			});
+			builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(config =>
                 {
                     config.SaveToken = true;
@@ -69,6 +80,11 @@ namespace EMarket.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseCors(builder => builder
+                                  .WithOrigins(app.Configuration["MyCorsURL"])
+                                  .WithMethods("GET")
+                                  .AllowAnyHeader()
+            );
             
             app.UseHttpsRedirection();
 

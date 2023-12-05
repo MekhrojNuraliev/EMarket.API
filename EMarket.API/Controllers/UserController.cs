@@ -1,6 +1,8 @@
 ﻿using Emarket.Domain.Entities;
 using Emarket.Domain.Models;
 using EMarket.Application.Services;
+using EMarket.Infrastructure.MediatR.MediatrForAuth;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,16 +15,21 @@ namespace EMarket.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IIdentityService _identityService;
+        private readonly IMediator _mediatr;
 
-        public UserController(IIdentityService identityService)
+        public UserController(IIdentityService identityService, IMediator mediatr)
         {
             _identityService = identityService;
+            _mediatr = mediatr;
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<Response<GetUserModel>> Register(User user) 
-            =>  await _identityService.RegisterAsync(user);
+        public async Task<ActionResult<GetUserModel>> Register(RegisterUser user)
+        {
+            var res = await _mediatr.Send(user);
+            return Ok(res);
+        }
 
         [HttpPost]
         [AllowAnonymous]
@@ -42,7 +49,7 @@ namespace EMarket.API.Controllers
             => await _identityService.DeleteUserAsync(userId);
 
         [HttpGet]
-        [Authorize(Roles = "Teacher")]
+        [Authorize(Roles = "Admin")]
         public string[] GetAllStudent()
         {
             return new string[] { "ssss", "wwwww" };

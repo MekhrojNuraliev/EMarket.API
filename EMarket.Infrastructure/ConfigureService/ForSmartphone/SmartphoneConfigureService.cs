@@ -19,13 +19,14 @@ namespace EMarket.Infrastructure.ConfigureService.ForSmartphone
     {
         public static void AddInfrastructureSmartphoneServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<ISmartphoneService, SmartphoneService>();
+            services.AddDbContext<SamsungSmartphoneDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("SmartphoneDbContext")));
             services.AddTransient<IRequestHandler<CreateSmartphone, Smartphone>, CreateSmartphoneHandler>();
             services.AddTransient<IRequestHandler<UpdateSmartphone, string>, UpdateSmartphoneHandler>();
             services.AddTransient<IRequestHandler<DeleteSmartphone, string>, DeleteSmartphoneHandler>();
             services.AddTransient<IRequestHandler<GetAllSmartphone, IEnumerable<Smartphone>>, GetAllSmartphoneHandler>();
-            services.AddScoped<ISmartphoneService, SmartphoneService>();
-            services.AddDbContext<SamsungSmartphoneDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("SmartphoneDbContext")));
+            services.AddTransient<IRequestHandler<GetByIdSmartphone, Smartphone>, GetByIdSmartphoneHandler>();
         }
     }
 }

@@ -14,20 +14,18 @@ namespace EMarket.API.Controllers
     [ApiController]
     public class SmartphoneController : ControllerBase
     {
-        private readonly ISmartphoneService _smartphoneService;
-        private readonly IExternalAPIs _externalAPIs;
+        //private readonly IExternalAPIs _externalAPIs;
         private readonly IMediator _mediator;
-        public SmartphoneController(ISmartphoneService smartphoneService, IExternalAPIs externalAPIs, IMediator mediator)
+        public SmartphoneController(IMediator mediator)//IExternalAPIs externalAPIs)
         {
-            _externalAPIs = externalAPIs;
-            _smartphoneService = smartphoneService;
+            //_externalAPIs = externalAPIs;
             _mediator = mediator;
         }
         [HttpPost]
-        public async Task<Response<Smartphone>> Create(CreateSmartphone smartphone)
+        public async Task<ActionResult<Smartphone>> Create(CreateSmartphone smartphone)
         {
-            var result = await _mediator.Send(smartphone);
-            return new(result);
+            var res = await _mediator.Send(smartphone);
+            return Ok(res);
         }
         [HttpPut]
         public async Task<ActionResult<string>> Update(UpdateSmartphone smartphone)
@@ -42,15 +40,16 @@ namespace EMarket.API.Controllers
             return Ok(res);
         }
         [HttpGet]
-        public async Task<ActionResult<Smartphone>> GetAll(GetAllSmartphone phone)
+        public async Task<ActionResult<Smartphone>> GetAll()
         {
-            var res = await _mediator.Send(phone);
+            var res = await _mediator.Send(new GetAllSmartphone());
             return Ok(res);
         }
         [HttpGet]
-        public async Task<Smartphone> GetById(int id)
+        public async Task<ActionResult<Smartphone>> GetById(int id)
         {
-            return _smartphoneService.GetByIdAsync(id).Result;
+            var  res = await _mediator.Send(new GetByIdSmartphone{ Id = id});
+            return Ok(res);
         }
         #region HttpClient
         //[HttpDelete]
