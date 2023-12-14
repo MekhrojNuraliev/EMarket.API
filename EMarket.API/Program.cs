@@ -3,12 +3,14 @@ using Emarket.Domain.Models;
 using EMarket.Application;
 using EMarket.Application.HttpClientBase;
 using EMarket.Application.Services;
+using EMarket.Application.Services.RabbitMq.Services;
 using EMarket.Infrastructure;
 using EMarket.Infrastructure.ConfigureService.ForSmartphone;
 using EMarket.Infrastructure.DataAccess;
 using EMarket.Infrastructure.MediatR.MediatrForRole;
 using EMarket.Infrastructure.MediatR.MediatrForSmartphone;
 using EMarket.Infrastructure.Services;
+using EMarket.Infrastructure.Services.RabbitMq.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -42,6 +44,9 @@ namespace EMarket.API
 
             builder.Services.AddHttpClient();
             builder.Services.AddScoped<IExternalAPIs,  ExternalAPIs>();
+
+            builder.Services.AddScoped<IMqService, MqService>();
+
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
             builder.Services.AddIdentity<User, IdentityRole<int>>()

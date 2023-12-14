@@ -1,3 +1,4 @@
+using EMarket.Application.Exeption;
 using EMarket.Application.Services;
 using EMarket.Infrastructure.DataAccess;
 using EMarket.Infrastructure.Services;
@@ -32,6 +33,8 @@ namespace EMarketMVC
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            //app.UseExeptionMiddleware();
 
             app.UseRouting();
 

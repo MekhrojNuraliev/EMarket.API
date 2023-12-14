@@ -15,10 +15,15 @@ namespace EMarketMVC.Controllers
             _service = service;
         }
 
-        public async Task<IActionResult> Index()
-        {
-			var smartphones = await _service.GetAllAsync();
-			return View(smartphones);
+		//      public async Task<IActionResult> Index()
+		//      {
+		//	var smartphones = await _service.GetAllAsync();
+		//	return View(smartphones);
+		//}
+		[HttpGet]
+		public IActionResult Login()
+		{
+			return View("~/Views/Smartphone/Index.cshtml");
 		}
 		[HttpPost]
 		public async Task<IActionResult> Create([FromForm]Smartphone smartphone)
@@ -37,6 +42,34 @@ namespace EMarketMVC.Controllers
 		{
 			var res = await _service.DeleteAsync(smartphone.Id);
 			return View(res);
+		}
+		[HttpGet]
+		public async Task<IActionResult> Index(int? page)
+		{
+			throw new NotImplementedException();
+			const int pageSize = 5;
+			int pageNumber = page ?? 1;
+
+			var Users = await _service.GetAllAsync();
+
+			var paginatedEmployees =  Paginate(Users, pageNumber, pageSize);
+
+			return View("~/Views/Smartphone/Index.cshtml", paginatedEmployees);
+		}
+
+		private PaginationViewModel<Smartphone> Paginate(IEnumerable<Smartphone> items, int pageNumber, int pageSize)
+		{
+			var paginatedItems = items.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+			var paginationViewModel = new PaginationViewModel<Smartphone>
+			{
+				Items = paginatedItems,
+				PageNumber = pageNumber,
+				PageSize = pageSize,
+				TotalItems = items.Count()
+			};
+
+			return paginationViewModel;
 		}
 	}
 }
